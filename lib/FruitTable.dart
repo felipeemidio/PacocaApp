@@ -15,7 +15,7 @@ class FruitTableState extends State<FruitTable> {
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   // List<Fruit> checkedFruits = new List<Fruit>();
 
-  void _removeCounter(index) {
+  void _removeFruitElement(index) {
     print("_removeCounter in pos " + index.toString());
     setState(() {
       widget.fruits.removeAt(index);
@@ -30,7 +30,7 @@ class FruitTableState extends State<FruitTable> {
     print("insert fruit in position " + index.toString());
   }
 
-  void _removeFruit(index) {
+  void removeFruit(index) {
     Fruit removedFruit = widget.fruits.removeAt(index);
     print("_removeFruit in pos " + index.toString());
     listKey.currentState.removeItem(
@@ -58,7 +58,7 @@ class FruitTableState extends State<FruitTable> {
       ),
       onDismissed: (item) {
         print('dismissed ' + fruit.name);
-        _removeCounter(index);
+        _removeFruitElement(index);
       },
       child: Container(
         padding: EdgeInsets.all(16),
@@ -68,7 +68,7 @@ class FruitTableState extends State<FruitTable> {
           onCheck: () {
             // _removeCounter(index);
 
-            _removeFruit(index);
+            removeFruit(index);
             // setState(() {
             //   print('sort ' + widget.fruits.length.toString());
             //   widget.fruits.sort((itemA, itemB) {
