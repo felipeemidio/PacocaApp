@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
 import './Fruit.dart';
-import './CustomItem.dart';
+import './FruitRow.dart';
 
 class FruitTable extends StatefulWidget {
   FruitTable({Key key, this.fruits}) : super(key: key);
@@ -62,7 +62,7 @@ class FruitTableState extends State<FruitTable> {
       },
       child: Container(
         padding: EdgeInsets.all(16),
-        child: CustomItem(
+        child: FruitRow(
           item: fruit,
           index: index,
           onCheck: () {
