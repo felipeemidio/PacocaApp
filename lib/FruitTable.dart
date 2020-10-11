@@ -13,9 +13,10 @@ class FruitTable extends StatefulWidget {
 
 class FruitTableState extends State<FruitTable> {
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  // List<Fruit> checkedFruits = new List<Fruit>();
 
   void _removeCounter(index) {
-    print("_removeCounter in pos " + index);
+    print("_removeCounter in pos " + index.toString());
     setState(() {
       widget.fruits.removeAt(index);
     });
@@ -30,52 +31,61 @@ class FruitTableState extends State<FruitTable> {
   }
 
   void _removeFruit(index) {
-    print("_removeFruit in pos " + index);
+    Fruit removedFruit = widget.fruits.removeAt(index);
+    print("_removeFruit in pos " + index.toString());
     listKey.currentState.removeItem(
       index,
       (_, animation) => SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(-1, 0),
+          begin: const Offset(1, 0),
           end: Offset(0, 0),
         ).animate(animation),
-        child: createRow(index),
+        child: createRow(removedFruit),
       ),
     );
   }
 
-  Widget createRow(int index) {
+  Widget createRow(Fruit fruit) {
+    print("create row " + fruit.name);
+    int index = widget.fruits.indexOf(fruit);
+    if (index >= widget.fruits.length) {
+      return null;
+    }
     return Dismissible(
-      key: Key(widget.fruits[index].id.toString()),
+      key: Key(fruit.id.toString()),
       background: Container(
         color: Colors.red,
       ),
       onDismissed: (item) {
-        setState(() {
-          print('removed ' + index.toString());
-          _removeCounter(index);
-        });
+        print('dismissed ' + fruit.name);
+        _removeCounter(index);
       },
       child: Container(
         padding: EdgeInsets.all(16),
         child: CustomItem(
-            item: widget.fruits[index],
-            index: index,
-            onCheck: () {
-              setState(() {
-                widget.fruits.sort((itemA, itemB) {
-                  if (itemA.selected == itemB.selected) {
-                    if (itemA.id > itemB.id) {
-                      return 1;
-                    }
-                    if (itemA.id < itemB.id) {
-                      return -1;
-                    }
-                    return 0;
-                  }
-                  return itemA.selected && !itemB.selected ? 1 : 0;
-                });
-              });
-            }),
+          item: fruit,
+          index: index,
+          onCheck: () {
+            // _removeCounter(index);
+
+            _removeFruit(index);
+            // setState(() {
+            //   print('sort ' + widget.fruits.length.toString());
+            //   widget.fruits.sort((itemA, itemB) {
+            //     if (itemA.selected == itemB.selected) {
+            //       if (itemA.id > itemB.id) {
+            //         return 1;
+            //       }
+            //       if (itemA.id < itemB.id) {
+            //         return -1;
+            //       }
+            //       return 0;
+            //     }
+            //     return itemA.selected && !itemB.selected ? 1 : 0;
+            //   });
+            // });
+          },
+        ),
       ),
     );
   }
@@ -95,10 +105,6 @@ class FruitTableState extends State<FruitTable> {
       return itemA.selected && !itemB.selected ? 1 : 0;
     });
 
-    List<Widget> items = [];
-    for (var i = 0; i < widget.fruits.length; i++) {
-      items.add(createRow(i));
-    }
     // return ListView(
     //   shrinkWrap: true,
     //   scrollDirection: Axis.vertical,
@@ -107,14 +113,16 @@ class FruitTableState extends State<FruitTable> {
     return AnimatedList(
       key: listKey,
       shrinkWrap: true,
-      initialItemCount: items.length,
+      initialItemCount: widget.fruits.length,
       itemBuilder: (context, index, animation) {
         return SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(-1, 0),
             end: Offset(0, 0),
           ).animate(animation),
-          child: createRow(index),
+          child: index < widget.fruits.length
+              ? createRow(widget.fruits[index])
+              : null,
         );
       },
     );
