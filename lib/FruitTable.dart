@@ -22,6 +22,23 @@ class FruitTableState extends State<FruitTable> {
     });
   }
 
+  void sortList() {
+    setState(() {
+      widget.fruits.sort((itemA, itemB) {
+        if (itemA.selected == itemB.selected) {
+          if (itemA.id > itemB.id) {
+            return 1;
+          }
+          if (itemA.id < itemB.id) {
+            return -1;
+          }
+          return 0;
+        }
+        return itemA.selected && !itemB.selected ? 1 : 0;
+      });
+    });
+  }
+
   void insertFruit(index) {
     setState(() {
       listKey.currentState.insertItem(index);
@@ -57,7 +74,6 @@ class FruitTableState extends State<FruitTable> {
         color: Colors.red,
       ),
       onDismissed: (item) {
-        print('dismissed ' + fruit.name);
         _removeFruitElement(index);
       },
       child: Container(
@@ -66,24 +82,7 @@ class FruitTableState extends State<FruitTable> {
           item: fruit,
           index: index,
           onCheck: () {
-            // _removeCounter(index);
-
             removeFruit(index);
-            // setState(() {
-            //   print('sort ' + widget.fruits.length.toString());
-            //   widget.fruits.sort((itemA, itemB) {
-            //     if (itemA.selected == itemB.selected) {
-            //       if (itemA.id > itemB.id) {
-            //         return 1;
-            //       }
-            //       if (itemA.id < itemB.id) {
-            //         return -1;
-            //       }
-            //       return 0;
-            //     }
-            //     return itemA.selected && !itemB.selected ? 1 : 0;
-            //   });
-            // });
           },
         ),
       ),
@@ -92,24 +91,7 @@ class FruitTableState extends State<FruitTable> {
 
   @override
   Widget build(BuildContext build) {
-    widget.fruits.sort((itemA, itemB) {
-      if (itemA.selected == itemB.selected) {
-        if (itemA.id > itemB.id) {
-          return 1;
-        }
-        if (itemA.id < itemB.id) {
-          return -1;
-        }
-        return 0;
-      }
-      return itemA.selected && !itemB.selected ? 1 : 0;
-    });
-
-    // return ListView(
-    //   shrinkWrap: true,
-    //   scrollDirection: Axis.vertical,
-    //   children: items,
-    // );
+    sortList();
     return AnimatedList(
       key: listKey,
       shrinkWrap: true,
