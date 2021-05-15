@@ -25,10 +25,31 @@ class _MarketListPageState extends State<MarketListPage> {
     Fruit(4, "Kiwi", 6),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    if(items.isNotEmpty) {
+      _sortItemsList();
+    }
+  }
+
   void _incrementCounter(String name, double price) {
     setState(() {
       counter += 1;
       items.add(Fruit(counter, name, price));
+    });
+  }
+
+  void _sortItemsList() {
+    items.sort((fruitA, fruitB) {
+      if(fruitA.selected == fruitB.selected) {
+        if(fruitA.id == fruitB.id) {
+          return 0;
+        }
+        return fruitA.id > fruitB.id ? 1 : -1;
+      }
+
+      return fruitA.selected && !fruitB.selected ? 1 : -1;
     });
   }
 
@@ -90,9 +111,10 @@ class _MarketListPageState extends State<MarketListPage> {
             onCheck: () {
               setState(() {
                 final fruitIndex = items.indexOf(currentFruit);
-                print('index $fruitIndex');
                 items[fruitIndex].toggleSelection();
                 currentFruit.toggleSelection();
+
+                _sortItemsList();
               });
             },
           );
