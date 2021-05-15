@@ -10,4 +10,13 @@ class Fruit {
     this.price = price;
     this.selected = false;
   }
+
+  toggleSelection() {
+    selected = !selected;
+  }
+
+  @override
+  String toString() {
+    return 'Fruit {id: $id, name: $name, price: $price, selected: $selected}\n';
+  }
 }

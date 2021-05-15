@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:pacocaApp/fruit_tile.dart';
+import 'package:pacocaApp/fruit_form_dialog.dart';
+import 'package:pacocaApp/item_checkbox_tile.dart';
 
-import 'Fruit.dart';
-import 'FruitTable.dart';
+import 'fruit.dart';
 
 class MarketListPage extends StatefulWidget {
   final String title;
@@ -14,32 +15,48 @@ class MarketListPage extends StatefulWidget {
 }
 
 class _MarketListPageState extends State<MarketListPage> {
+  bool showDone = false;
+  int counter = 10;
   List<Fruit> items = [
     Fruit(0, "Maçã", 5.66),
     Fruit(1, "Banana", 4),
     Fruit(2, "Abacaxi", 3),
     Fruit(3, "Laranja", 1.50),
     Fruit(4, "Kiwi", 6),
-    // Fruit(5, "Ameixa", 3),
-    // Fruit(6, "Melão", 4.2),
-    // Fruit(7, "Melancia", 4.1),
-    // Fruit(8, "Uva", 2),
-    // Fruit(9, "Mamão", 2.3),
   ];
-  List<Fruit> checkedItems = [];
-  int counter = 10;
-  final GlobalKey<FruitTableState> tableKey = GlobalKey<FruitTableState>();
 
-  void _incrementCounter(formState) {
+  void _incrementCounter(String name, double price) {
     setState(() {
       counter += 1;
-      tableKey.currentState.insertFruit(items.length);
-      items.add(Fruit(counter, formState['name'], formState['price']));
+      items.add(Fruit(counter, name, price));
+    });
+  }
+
+  List<Fruit> _filterList() {
+    if(showDone) {
+      return items;
+    }
+
+    List<Fruit> newList = [];
+    for(Fruit f in items) {
+      if(f.selected) {
+        newList.add(f);
+      }
+    }
+    return items.where((f) => !f.selected).toList();
+  }
+
+  void _toggleShowDone() {
+    setState(() {
+      showDone = !showDone;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final filteredItems = _filterList();
+    print(filteredItems);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -47,83 +64,52 @@ class _MarketListPageState extends State<MarketListPage> {
           style: TextStyle(fontFamily: 'IndieFlower', fontSize: 24.0),
         ),
       ),
-      body: FruitTable(key: tableKey, fruits: items),
+      body: ListView.builder(
+        itemCount: filteredItems.length + 1,
+        itemBuilder: (_, index) {
+          if(index == filteredItems.length) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                height: 80,
+                color: Colors.black45,
+                alignment: Alignment.center,
+                child: ItemCheckboxTile(
+                  selected: showDone,
+                  title: 'Mostrar itens marcados',
+                  onTap: (_) => _toggleShowDone(),
+                ),
+              ),
+            );
+          }
+
+
+          Fruit currentFruit = filteredItems[index];
+          return FruitTile(
+            item: currentFruit,
+            onCheck: () {
+              setState(() {
+                final fruitIndex = items.indexOf(currentFruit);
+                print('index $fruitIndex');
+                items[fruitIndex].toggleSelection();
+                currentFruit.toggleSelection();
+              });
+            },
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add',
         child: Icon(Icons.add),
         onPressed: () {
-          fruitFormDialog(context, _incrementCounter);
+          return showDialog(
+            context: context,
+            builder: (_) => FruitFormDialog(
+              onSubmit: _incrementCounter,
+            ),
+          );
         },
       ),
     );
   }
-}
-
-Future<dynamic> fruitFormDialog(context, onSave) {
-  final _formKey = GlobalKey<FormState>();
-  var mController = MoneyMaskedTextController(leftSymbol: 'R\$ ');
-  String _itemName;
-  double _value;
-
-  return showDialog(
-    context: context,
-    builder: (_) => SimpleDialog(
-      title: Text('Novo item'),
-      children: <Widget>[
-        Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                child: TextFormField(
-                  decoration: InputDecoration(hintText: 'Item...'),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Digite o nome do item';
-                    }
-                    return null;
-                  },
-                  onSaved: (input) => _itemName = input,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                child: TextFormField(
-                  controller: mController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(hintText: 'Preço...'),
-                  onSaved: (input) {
-                    if (mController.numberValue == 0) {
-                      print("valor igual a 0");
-                    } else {
-                      print("valor diferente de 0");
-                    }
-                    _value = mController.numberValue;
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                child: ElevatedButton(
-                  child: Text(
-                    "Adicionar",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      _formKey.currentState.save();
-                      onSave({'name': _itemName, 'price': _value});
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
-    ),
-  );
 }
