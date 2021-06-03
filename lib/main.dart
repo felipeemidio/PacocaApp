@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pacocaApp/market_list_page.dart';
+import 'package:pacocaApp/pages/savedLists/saved_lists_page.dart';
 
 void main() {
   runApp(RootApp());
@@ -15,7 +15,7 @@ class RootApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MarketListPage(title: 'Paçoca App'),
+      home: SavedListsPage(),
     );
   }
 }
