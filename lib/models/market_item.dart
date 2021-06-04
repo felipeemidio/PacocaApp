@@ -1,13 +1,13 @@
-class GroceryItem {
+class MarketItem {
   int id;
   String name;
   double price;
   bool selected = false;
 
-  GroceryItem(int id, String name, double price) {
+  MarketItem(int id, String name) {
     this.id = id;
     this.name = name;
-    this.price = price;
+    this.price = 0.0;
     this.selected = false;
   }
 
@@ -17,6 +17,6 @@ class GroceryItem {
 
   @override
   String toString() {
-    return 'GroceryItem {id: $id, name: $name, price: $price, selected: $selected}\n';
+    return 'MarketItem {id: $id, name: $name, price: $price, selected: $selected}\n';
   }
 }

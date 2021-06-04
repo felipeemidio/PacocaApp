@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pacocaApp/pages/savedLists/saved_lists_page.dart';
+import 'package:pacocaApp/pages/saved_lists_page.dart';
 
 void main() {
   runApp(RootApp());
