@@ -5,7 +5,12 @@ import 'package:pacocaApp/pages/create_market_list_page.dart';
 import 'package:pacocaApp/pages/items_list_page.dart';
 import 'package:pacocaApp/pages/market_list_detail_page.dart';
 
-class SavedListsPage extends StatelessWidget {
+class SavedListsPage extends StatefulWidget {
+  @override
+  _SavedListsPageState createState() => _SavedListsPageState();
+}
+
+class _SavedListsPageState extends State<SavedListsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +35,13 @@ class SavedListsPage extends StatelessWidget {
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => CreateMarketListPage()),
+            MaterialPageRoute(builder: (_) => CreateMarketListPage(
+              onCreate: (newMarketList) {
+                setState(() {
+                  mockMarketLists.add(newMarketList);
+                });
+              },
+            )),
           );
         },
       ),

@@ -5,6 +5,10 @@ import 'package:pacocaApp/models/market_list.dart';
 import 'package:pacocaApp/shared/widgets/item_checkbox_tile.dart';
 
 class CreateMarketListPage extends StatefulWidget {
+  final void Function(MarketList) onCreate;
+
+  CreateMarketListPage({@required this.onCreate});
+
   @override
   _CreateMarketListPageState createState() => _CreateMarketListPageState();
 }
@@ -86,7 +90,7 @@ class _CreateMarketListPageState extends State<CreateMarketListPage> {
                     });
                     final newMarketList = MarketList(biggestId + 1, titleController.text);
                     newMarketList.items = items;
-                    mockMarketLists.add(newMarketList);
+                    widget.onCreate(newMarketList);
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
