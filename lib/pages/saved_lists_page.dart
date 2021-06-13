@@ -27,7 +27,7 @@ class _SavedListsPageState extends State<SavedListsPage> {
                 MaterialPageRoute(builder: (_) => ItemsListPage()),
               );
             },
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.list),
           ),
         ],
       ),
